@@ -113,17 +113,6 @@ signalgrid send [options]
 
 ---
 
-## Severity Mapping
-
-Accepted values:
-
-- `crit`
-- `warn`
-- `info`
-- `success`
-
----
-
 ## Examples
 
 Ping default server:
