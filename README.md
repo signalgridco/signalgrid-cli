@@ -113,6 +113,17 @@ signalgrid send [options]
 
 ---
 
+## Severity Mapping
+
+Accepted values:
+
+- `crit`
+- `warn`
+- `info`
+- `success`
+
+---
+
 ## Examples
 
 Ping default server:
@@ -141,15 +152,4 @@ signalgrid send \
   -b "Disk is full" \
   -C
 ```
-
----
-
-## Severity Mapping
-
-Accepted values:
-
-- `crit`
-- `warn`
-- `info`
-- `success`
 
