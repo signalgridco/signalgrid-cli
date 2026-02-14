@@ -1,0 +1,134 @@
+#!/bin/bash
+
+# Configuration
+CLIENT_KEY="[your-key-here]"
+DEFAULT_ENDPOINT="api.signalgrid.co"
+VERSION="v1"
+
+# Helper function for help page
+show_help() {
+    echo "Signalgrid CLI Tool"
+    echo ""
+    echo "Usage: signalgrid [command] [options]"
+    echo ""
+    echo "Commands:"
+    echo "  ping             Check connectivity to the endpoint"
+    echo "  help             Show this help page"
+    echo "  send             Send a notification to a channel"
+    echo ""
+    echo "Options for all commands:"
+    echo "  -e, --endpoint   [FQDN] API endpoint (Default: api.signalgrid.co)"
+    echo ""
+    echo "Options for 'send':"
+    echo "  -c, --channel    [Hash] The channel token (Required)"
+    echo "  -s, --severity   [String] crit, warn, info, success (Default: info)"
+    echo "  -C, --critical   Set notification as critical (Optional)"
+    echo "  -t, --title      [String] Notification title (Optional)"
+    echo "  -b, --body       [String] Notification body text (Required)"
+    echo ""
+    echo "Examples:"
+    echo "  # Ping the default server"
+    echo "  ./signalgrid ping"
+    echo ""
+    echo "  # Send with title (-t) and severity (-s)"
+    echo "  ./signalgrid send -c HASH123 -s crit -t 'Backup Failed' -b 'Disk is full' -C"
+    echo ""
+    echo "  # Send to a custom endpoint using FQDN"
+    echo "  ./signalgrid send -c HASH123 -b 'Hello' -e dev.signalgrid.co"
+    echo ""
+}
+
+# Initial Vars
+COMMAND=$1
+shift
+
+# Global Params
+RAW_ENDPOINT=$DEFAULT_ENDPOINT
+CHANNEL=""
+SEVERITY="info"
+IS_CRITICAL="false"
+TITLE=""
+BODY=""
+
+# First pass: Extract endpoint
+TEMP_ARGS=("$@")
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -e|--endpoint) RAW_ENDPOINT="$2"; shift 2 ;;
+        *) shift ;;
+    esac
+done
+set -- "${TEMP_ARGS[@]}"
+
+# --- ENDPOINT SANITIZER ---
+if [[ ! $RAW_ENDPOINT =~ ^https?:// ]]; then
+    ENDPOINT="https://$RAW_ENDPOINT"
+else
+    ENDPOINT="$RAW_ENDPOINT"
+fi
+[[ "${ENDPOINT}" != */ ]] && ENDPOINT="${ENDPOINT}/"
+# --------------------------
+
+case "$COMMAND" in
+    ping)
+        if curl -s --head --request GET "$ENDPOINT/$VERSION/push" | grep -E "200 OK|405 Method Not Allowed" > /dev/null; then
+            echo "OK"
+        else
+            echo "FAIL"
+        fi
+        ;;
+
+    help)
+        show_help
+        ;;
+
+    send)
+        while [[ $# -gt 0 ]]; do
+            case $1 in
+                -c|--channel)  CHANNEL="$2"; shift 2 ;;
+                -s|--severity) SEVERITY=$(echo "$2" | tr '[:upper:]' '[:lower:]'); shift 2 ;;
+                -C|--critical) IS_CRITICAL="true"; shift ;;
+                -t|--title)    TITLE="$2"; shift 2 ;;
+                -b|--body)     BODY="$2"; shift 2 ;;
+                -e|--endpoint) shift 2 ;; 
+                *) shift ;;
+            esac
+        done
+
+        if [ -z "$CHANNEL" ]; then
+            echo "Error: --channel is required."
+            exit 1
+        fi
+        if [ -z "$BODY" ]; then
+            echo "Error: --body is required."
+            exit 1
+        fi
+
+        case "$SEVERITY" in
+            crit|warn|info|success) ;;
+            *) SEVERITY="info" ;;
+        esac
+
+        # The API still expects the field as "type" for now, so we map it here
+        FINAL_TYPE=$(echo "$SEVERITY" | tr '[:lower:]' '[:upper:]')
+
+        curl -s \
+          --form-string "client_key=$CLIENT_KEY" \
+          --form-string "channel=$CHANNEL" \
+          --form-string "type=$FINAL_TYPE" \
+          --form-string "critical=$IS_CRITICAL" \
+          --form-string "title=$TITLE" \
+          --form-string "body=$BODY" \
+          "$ENDPOINT/$VERSION/push"
+        
+        echo "" 
+        ;;
+
+    *)
+        if [ -n "$COMMAND" ] && [ "$COMMAND" != "help" ]; then
+            echo "Unknown command: $COMMAND"
+        fi
+        show_help
+        exit 1
+        ;;
+esac
