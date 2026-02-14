@@ -121,6 +121,16 @@ Ping default server:
 signalgrid ping
 ```
 
+Send a notification:
+
+```bash
+signalgrid send \
+  -c HASH123 \
+  -s crit \
+  -t "Backup Failed" \
+  -b "Disk is full" \
+```
+
 Send a critical notification:
 
 ```bash
