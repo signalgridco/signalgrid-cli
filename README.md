@@ -143,4 +143,3 @@ Accepted values:
 - `info`
 - `success`
 
----
