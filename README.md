@@ -132,15 +132,6 @@ signalgrid send \
   -C
 ```
 
-Send to a custom endpoint:
-
-```bash
-signalgrid send \
-  -c HASH123 \
-  -b "Hello" \
-  -e dev.signalgrid.co
-```
-
 ---
 
 ## Severity Mapping
@@ -151,21 +142,6 @@ Accepted values:
 - `warn`
 - `info`
 - `success`
-
-The value is normalized to uppercase before being sent to the API:
-
-```text
-crit    -> CRIT
-warn    -> WARN
-info    -> INFO
-success -> SUCCESS
-```
-
-Invalid values default to:
-
-```text
-INFO
-```
 
 ---
 
