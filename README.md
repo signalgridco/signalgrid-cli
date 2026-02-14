@@ -1,111 +1,191 @@
 # Signalgrid CLI Tool
 
 A lightweight Bash CLI for interacting with the Signalgrid API.  
-It allows you to test connectivity and send notifications to a channel using simple command-line arguments.
+It allows you to test connectivity and send notifications to a channel.
+
+---
 
 ## Requirements
 
-- Bash
-- curl
+- `bash`
+- `curl`
+
+---
 
 ## Installation
 
-1. Save the script as `signalgrid`
-2. Make it executable:
+Save the script as:
 
-   chmod +x signalgrid
+```bash
+signalgrid
+```
 
-3. (Optional) Move it to your PATH:
+Make it executable:
 
-   mv signalgrid /usr/local/bin/
+```bash
+chmod +x signalgrid
+```
+
+(Optional) Move it into your PATH:
+
+```bash
+mv signalgrid /usr/local/bin/
+```
+
+---
 
 ## Configuration
 
 Edit the script and set your client key:
 
+```bash
 CLIENT_KEY="[your-key-here]"
+```
 
-Default configuration:
+Default configuration inside the script:
 
-- Endpoint: api.signalgrid.co
-- API Version: v1
+- Endpoint: `api.signalgrid.co`
+- API Version: `v1`
 
-The script automatically prepends `https://` if no scheme is provided and ensures proper URL formatting.
+If no scheme is provided, `https://` is automatically prepended.  
+A trailing slash is also automatically ensured.
+
+---
 
 ## Usage
 
+```bash
 signalgrid [command] [options]
+```
 
-### Commands
+---
 
-ping  
+## Commands
+
+### `ping`
+
 Check connectivity to the configured endpoint.
 
-help  
-Show the help page.
+```bash
+signalgrid ping
+```
 
-send  
+The command returns:
+
+- `OK` if reachable
+- `FAIL` otherwise
+
+---
+
+### `help`
+
+Display the help page.
+
+```bash
+signalgrid help
+```
+
+---
+
+### `send`
+
 Send a notification to a channel.
 
-## Global Options
+```bash
+signalgrid send [options]
+```
 
--e, --endpoint [FQDN]  
-Override the API endpoint (default: api.signalgrid.co)
+#### Required options
 
-## Send Command Options
+```bash
+-c, --channel   [Hash]    Channel token
+-b, --body      [String]  Notification body
+```
 
--c, --channel [Hash]  
-Channel token (required)
+#### Optional options
 
--b, --body [String]  
-Notification body text (required)
+```bash
+-s, --severity  [String]  crit | warn | info | success (default: info)
+-C, --critical            Mark as critical
+-t, --title     [String]  Notification title
+-e, --endpoint  [FQDN]    Override endpoint
+```
 
--s, --severity [String]  
-crit, warn, info, success (default: info)
-
--C, --critical  
-Mark notification as critical (optional)
-
--t, --title [String]  
-Notification title (optional)
+---
 
 ## Examples
 
-Ping the default server:
+Ping default server:
 
+```bash
 signalgrid ping
+```
 
 Send a critical notification:
 
-signalgrid send -c HASH123 -s crit -t "Backup Failed" -b "Disk is full" -C
+```bash
+signalgrid send \
+  -c HASH123 \
+  -s crit \
+  -t "Backup Failed" \
+  -b "Disk is full" \
+  -C
+```
 
 Send to a custom endpoint:
 
-signalgrid send -c HASH123 -b "Hello" -e dev.signalgrid.co
+```bash
+signalgrid send \
+  -c HASH123 \
+  -b "Hello" \
+  -e dev.signalgrid.co
+```
+
+---
 
 ## Severity Mapping
 
-The CLI accepts:
+Accepted values:
 
-- crit
-- warn
-- info
-- success
+- `crit`
+- `warn`
+- `info`
+- `success`
 
-The value is normalized to uppercase and sent to the API as:
+The value is normalized to uppercase before being sent to the API:
 
-type=CRIT | WARN | INFO | SUCCESS
+```text
+crit    -> CRIT
+warn    -> WARN
+info    -> INFO
+success -> SUCCESS
+```
 
-Invalid severity values default to `info`.
+Invalid values default to:
+
+```text
+INFO
+```
+
+---
+
+## API Endpoint Used
+
+Notifications are sent to:
+
+```text
+https://{endpoint}/v1/push
+```
+
+The request is sent as multipart form data using:
+
+```bash
+curl --form-string
+```
+
+---
 
 ## Exit Codes
 
-- 0 on success
-- 1 on validation or command error
-
-## Notes
-
-- The script uses `curl --form-string` to send multipart form data.
-- The API endpoint used for notifications is:
-
-  {endpoint}/v1/push
+- `0` — success
+- `1` — validation or command error
