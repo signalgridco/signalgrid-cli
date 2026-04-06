@@ -3,15 +3,6 @@
 A lightweight Bash CLI for interacting with the Signalgrid API.  
 It allows you to test connectivity and send notifications to a channel.
 
----
-
-## Requirements
-
-- `bash`
-- `curl`
-
----
-
 ## Installation
 
 Save the script as:
