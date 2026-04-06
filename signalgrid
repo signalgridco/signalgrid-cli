@@ -31,10 +31,7 @@ show_help() {
     echo "  signalgrid ping"
     echo ""
     echo "  # Send with title (-t) and severity (-s)"
-    echo "  signalgrid send -c 098f6bcd4621d373cade4e832627b4f6 -s crit -t 'Backup Failed' -b 'Disk is full' -C"
-    echo ""
-    echo "  # Send to a custom endpoint using FQDN"
-    echo "  signalgrid send -c 098f6bcd4621d373cade4e832627b4f6 -b 'Hello' -e dev.signalgrid.co"
+    echo "  signalgrid send -c 098f6bcd4621d373cade4e832627b4f6 -s crit -t 'Backup Failed' -b 'Disk is full'"
     echo ""
 }
 
