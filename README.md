@@ -17,40 +17,14 @@ It allows you to test connectivity and send notifications to a channel.
 Save the script as:
 
 ```bash
-signalgrid
-```
-
-Make it executable:
-
-```bash
-chmod +x signalgrid
-```
-
-(Optional) Move it into your PATH:
-
-```bash
-mv signalgrid /usr/local/bin/
+curl -fsSL https://signalgrid.co/install.sh | bash
 ```
 
 ---
 
 ## Configuration
 
-Edit the script and set your client key:
-
-```bash
-CLIENT_KEY="[your-key-here]"
-```
-
-Default configuration inside the script:
-
-- Endpoint: `api.signalgrid.co`
-- API Version: `v1`
-
-If no scheme is provided, `https://` is automatically prepended.  
-A trailing slash is also automatically ensured.
-
----
+Once you provide your client-key to the install script, everything is set up.
 
 ## Usage
 
