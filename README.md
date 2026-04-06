@@ -1,7 +1,7 @@
-# Signalgrid push CLI Tool
+# Signalgrid Push CLI
 
 A lightweight Bash CLI for interacting with the Signalgrid API.  
-It allows you to test connectivity and send notifications to a channel.
+It allows you send notifications and test the connection to the API Servers.
 
 ## Installation
 
