@@ -125,7 +125,7 @@ Send a notification:
 
 ```bash
 signalgrid send \
-  -c HASH123 \
+  -c 098f6bcd4621d373cade4e832627b4f6 \
   -s crit \
   -t "Backup Failed" \
   -b "Disk is full" \
@@ -135,7 +135,7 @@ Send a critical notification:
 
 ```bash
 signalgrid send \
-  -c HASH123 \
+  -c 098f6bcd4621d373cade4e832627b4f6 \
   -s crit \
   -t "Backup Failed" \
   -b "Disk is full" \
