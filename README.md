@@ -5,8 +5,6 @@ It allows you to test connectivity and send notifications to a channel.
 
 ## Installation
 
-Save the script as:
-
 ```bash
 curl -fsSL https://signalgrid.co/install.sh | bash
 ```
